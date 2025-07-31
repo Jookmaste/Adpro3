@@ -10,49 +10,34 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Locale.filter;
 import static java.util.stream.Collectors.toMap;
 
-public class WordCountMapTask implements Callable<Map<String, FileFreq>> {
+public class WordCountMapTask implements Callable<Map<String,FileFreq>> {
     private PdfDocument doc;
+    private Stream<String> wordCount;
     public WordCountMapTask(PdfDocument doc) throws IOException {
         this.doc = doc;
     }
     @Override
     public Map<String, FileFreq> call() throws Exception {
-        PDFTextStripper reader = new PDFTextStripper();
-        String text = reader.getText(doc.getDocument());
-
-        Pattern pattern = Pattern.compile("\\s+");
-        Map<String, Long> countMap = pattern.splitAsStream(text)
-                .map(word -> word.replaceAll("[^a-zA-Z]", "").toLowerCase().trim())
-                .filter(word -> word.length() > 3)
-                .collect(Collectors.groupingBy(w -> w, Collectors.counting()));
-
-        Map<String, FileFreq> wordFreqMap = countMap.entrySet().stream()
-                .filter(e -> e.getValue() > 1)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        e -> new FileFreq(doc.getName(), doc.getFilePath(), e.getValue().intValue())
-                ));
-
-//        Map<String, FileFreq> wordCount;
-//        PDFTextStripper reader = new PDFTextStripper();
-//        Pattern pattern = Pattern.compile(" ");
-//        this.wordCount = pattern.splitAsStream(s)
-//        wordCount = pattern.splitAsStream(s)
-//                .map(word -> word.replaceAll("[^a-zA-Z]", "").toLowerCase().trim())
-//                .filter(word -> word.length() > 3)
-//                .map(word -> new AbstractMap.SimpleEntry<>(word, 1))
-//                .collect(toMap(e -> e.getKey(), e -> e.getValue(), (v1, v2) -> v1 + v2))
-//                .entrySet()
-//                .stream();
-//        filter(e -> e.getValue() > 1)
-//                .collect(Collectors.toMap(e -> e.getKey(), e -> new FileFreq(doc.getName
-//                        (), doc.getFilePath(), e.getValue())));
-//        return wordCount;
-
-        return wordFreqMap;
+        Map<String, FileFreq> wordCount;
+    PDFTextStripper reader = new PDFTextStripper();
+    Pattern pattern = Pattern.compile(" ");
+    String s = reader.getText(doc.getDocument());
+        this.wordCount = pattern.splitAsStream(s);
+        wordCount = pattern.splitAsStream(s)
+            .map(word-> word.replaceAll("[^a-zA-Z]", "").toLowerCase().trim())
+            .filter(word-> word.length() > 3)
+            .map(word-> new AbstractMap.SimpleEntry<>(word, 1))
+            .collect(toMap(e-> e.getKey(), e-> e.getValue(), (v1, v2)-> v1 + v2))
+            .entrySet()
+            .stream()
+            .filter(e-> e.getValue() > 1)
+            .collect(Collectors.toMap(e-> e.getKey(), e-> new FileFreq(doc.getName
+            (),doc.getFilePath(),e.getValue())));
+        return wordCount;
     }
 }

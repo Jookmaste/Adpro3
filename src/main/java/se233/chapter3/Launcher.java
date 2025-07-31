@@ -6,21 +6,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.net.URL;
+
 public class Launcher extends Application {
     public static Stage primaryStage;
     public static HostServices hs;
+
     @Override
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
         hs = getHostServices();
-        FXMLLoader fxmlLoader = new FXMLLoader(Launcher. class.getResource("main-view. fxml"));
-                Scene scene = new Scene(fxmlLoader.load());
-//        stage.setTitle("Indexer");
-//        stage.setScene(scene);
-//        stage.show();
+        FXMLLoader fxmlLoader = new FXMLLoader(Launcher.class.getResource("main-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setTitle("Indexer");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    static void main(String[] args) { launch(args); }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

@@ -35,12 +35,12 @@ public class MainViewController {
     private Button startButton;
     @FXML
     private ListView listView;
+
     @FXML
     public void initialize() {
         inputListView.setOnDragOver(event-> {
             Dragboard db = event.getDragboard();
-            final boolean isAccepted = db.getFiles().get(0).getName().toLowerCase().
-                    endsWith(".pdf");
+            final boolean isAccepted = db.getFiles().get(0).getName().toLowerCase().endsWith(".pdf");
             if (db.hasFiles() && isAccepted) {
                 event.acceptTransferModes(TransferMode.COPY);
             } else {
@@ -61,8 +61,8 @@ public class MainViewController {
                     filePath = file.getAbsolutePath();
                     inputListView.getItems().add(filePath);
                 }
-            event.setDropCompleted(success);
-            event.consume();
+                event.setDropCompleted(success);
+                event.consume();
             }
         });
         startButton.setOnAction(event-> {

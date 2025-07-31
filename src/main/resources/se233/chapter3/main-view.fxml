@@ -13,7 +13,7 @@
 
 
 <?import javafx.scene.control.Button?>
-<FlowPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<FlowPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se233.chapter3.controller.MainViewController">
     <children>
         <MenuBar prefHeight="20.0" prefWidth="400.0">
             <menus>
@@ -40,11 +40,11 @@
                 <ListView fx:id="inputListView" layoutX="10" layoutY="45.0" prefHeight="150" prefWidth="180" style="-fx-border-color: black;"/>
                 <Button fx:id="startButton" layoutX="20.0" layoutY="200.0" prefHeight="20.0" prefWidth="156.0" text="Start Indexing"/>
             </children>
+            <Pane layoutX="200" layoutY="20">
+                <children>
+                    <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" />
+                </children>
+            </Pane>
         </AnchorPane>
-        <Pane>
-            <children>
-                <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" />
-            </children>
-        </Pane>
     </children>
 </FlowPane>
