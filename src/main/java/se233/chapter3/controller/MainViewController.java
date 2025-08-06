@@ -4,10 +4,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Region;
@@ -33,13 +30,15 @@ public class MainViewController {
     private Map<String, String> filenameToPathMap = new LinkedHashMap<>();
 
     LinkedHashMap<String, List<FileFreq>>uniqueSets;
+
+    @FXML
+    private MenuItem closeMenuItem;
     @FXML
     private ListView<String>inputListView;
     @FXML
     private Button startButton;
     @FXML
     private ListView listView;
-    @FXML
 
 
     public void initialize() {
@@ -167,6 +166,9 @@ public class MainViewController {
             Popup popup = new Popup();
             popup.getContent().add(popupListView);
             popup.show(Launcher.primaryStage);
+        });
+        closeMenuItem.setOnAction(event -> {
+            javafx.application.Platform.exit();
         });
     }
 }
