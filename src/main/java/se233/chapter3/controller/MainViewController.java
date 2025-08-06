@@ -6,10 +6,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import javafx.scene.input.KeyEvent;
 import se233.chapter3.Launcher;
 import se233.chapter3.model.FileFreq;
 import se233.chapter3.model.PdfDocument;
@@ -155,7 +157,6 @@ public class MainViewController {
                 lookupTable.put(listOfLinks.get(i), listOfLinks.get(i).getPath());
                 popupListView.getItems().add(listOfLinks.get(i));
             }
-
             popupListView.setPrefWidth(Region.USE_COMPUTED_SIZE);
             popupListView.setPrefHeight(popupListView.getItems().size() * 40);
             popupListView.setOnMouseClicked(innerEvent-> {
@@ -166,7 +167,13 @@ public class MainViewController {
             Popup popup = new Popup();
             popup.getContent().add(popupListView);
             popup.show(Launcher.primaryStage);
+            popupListView.setOnKeyPressed(keysevent -> {
+                if (keysevent.getCode() == KeyCode.ESCAPE) {
+                    popup.hide();
+                }
+            });
         });
+
         closeMenuItem.setOnAction(event -> {
             javafx.application.Platform.exit();
         });
