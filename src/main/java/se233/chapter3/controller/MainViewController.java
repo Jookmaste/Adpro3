@@ -30,6 +30,8 @@ public class MainViewController {
 
     Map<String, String> displayToKeyMap;
 
+    private Map<String, String> filenameToPathMap = new LinkedHashMap<>();
+
     LinkedHashMap<String, List<FileFreq>>uniqueSets;
     @FXML
     private ListView<String>inputListView;
@@ -55,14 +57,11 @@ public class MainViewController {
             boolean success = false;
             if (db.hasFiles()) {
                 success = true;
-                String filePath;
-                int total_files = db.getFiles().size();
-                WordCountMapTask[] wordCountMapTaskArray = new WordCountMapTask[total_files];
-                Map<String, FileFreq>[] wordMap = new Map[total_files];
-                for (int i = 0; i < total_files; i++) {
-                    File file = db.getFiles().get(i);
-                    filePath = file.getAbsolutePath();
-                    inputListView.getItems().add(filePath);
+                for (File file : db.getFiles()) {
+                    String filename = file.getName();
+                    String path = file.getAbsolutePath();
+                    inputListView.getItems().add(filename);
+                    filenameToPathMap.put(filename, path); // <<<< mapping
                 }
                 event.setDropCompleted(success);
                 event.consume();
@@ -79,12 +78,15 @@ public class MainViewController {
                     Launcher.primaryStage.getScene().setRoot(box);
             ExecutorService executor = Executors.newFixedThreadPool(4);
             final ExecutorCompletionService<Map<String,FileFreq>> completionService = new ExecutorCompletionService<>(executor);
+
             List<String> inputListViewItems = inputListView.getItems();
             int total_files = inputListViewItems.size();
             Map<String, FileFreq>[] wordMap = new Map[total_files];
             for (int i = 0; i < total_files; i++) {
                 try {
-                    String filePath = inputListViewItems.get(i);
+//                    String filePath = inputListViewItems.get(i);
+                    String filename = inputListViewItems.get(i);
+                    String filePath = filenameToPathMap.get(filename);
                     PdfDocument p = new PdfDocument(filePath);
                     completionService.submit(new WordCountMapTask(p));
                 } catch (IOException e) {
@@ -107,7 +109,7 @@ public class MainViewController {
             listView.getItems().addAll(uniqueSets.keySet());
 
                 List<String> displayList = new ArrayList<>();
-                displayToKeyMap = new HashMap<>(); // <-- ใช้ field ไม่ใช่ตัวแปรใหม่!
+                displayToKeyMap = new HashMap<>();
 
                 for (Map.Entry<String, List<FileFreq>> entry : uniqueSets.entrySet()) {
                     String word = entry.getKey();
