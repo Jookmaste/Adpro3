@@ -27,12 +27,19 @@ private Map<String,FileFreq>[] wordMap;
                         })
                 ))
                 .entrySet()
+
                 .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(e -> e.getKey()
-                        ,e -> e.getValue()
-                        ,(v1, v2) -> v1
-                        ,() -> new LinkedHashMap<>()));
+                .sorted((e1, e2) -> {
+                    int sum1 = e1.getValue().stream().mapToInt(FileFreq::getFreq).sum();
+                    int sum2 = e2.getValue().stream().mapToInt(FileFreq::getFreq).sum();
+                    return Integer.compare(sum2, sum1); // มากไปน้อย
+                })
+                .collect(Collectors.toMap(
+                        e -> e.getKey(),
+                        e -> e.getValue(),
+                        (v1, v2) -> v1,
+                        LinkedHashMap::new
+                ));
         return uniqueSets;
     }
 }

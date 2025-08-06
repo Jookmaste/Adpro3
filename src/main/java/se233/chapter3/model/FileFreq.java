@@ -13,7 +13,12 @@ public class FileFreq {
     public String toString () {
         return String.format("{%s:%d}", name, freq);
     }
+
     public String getPath() {
         return path;
+    }
+
+    public int getFreq() {
+        return freq;
     }
 }
