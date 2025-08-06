@@ -19,15 +19,17 @@ import se233.chapter3.model.PdfDocument;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class MainViewController {
+
+    Map<String, String> displayToKeyMap;
+
     LinkedHashMap<String, List<FileFreq>>uniqueSets;
     @FXML
     private ListView<String>inputListView;
@@ -35,8 +37,9 @@ public class MainViewController {
     private Button startButton;
     @FXML
     private ListView listView;
-
     @FXML
+
+
     public void initialize() {
         inputListView.setOnDragOver(event-> {
             Dragboard db = event.getDragboard();
@@ -100,7 +103,26 @@ public class MainViewController {
             WordCountReduceTask merger = new WordCountReduceTask(wordMap);
             Future<LinkedHashMap<String, List<FileFreq>>> future =executor.submit(merger);
             uniqueSets =future.get();
+
             listView.getItems().addAll(uniqueSets.keySet());
+
+                List<String> displayList = new ArrayList<>();
+                displayToKeyMap = new HashMap<>(); // <-- ใช้ field ไม่ใช่ตัวแปรใหม่!
+
+                for (Map.Entry<String, List<FileFreq>> entry : uniqueSets.entrySet()) {
+                    String word = entry.getKey();
+                    List<FileFreq> freqs = entry.getValue();
+                    List<Integer> freqCounts = freqs.stream()
+                            .map(FileFreq::getFreq)
+                            .sorted(Comparator.reverseOrder())
+                            .collect(Collectors.toList());
+                    String display = word + " (" + freqCounts.stream().map(String::valueOf).collect(Collectors.joining(", ")) + ")";
+                    displayList.add(display);
+                    displayToKeyMap.put(display, word);
+                }
+                listView.getItems().clear();
+                listView.getItems().addAll(displayList);
+
             }catch (Exception e){
                 e.printStackTrace();
                 }finally {
@@ -117,14 +139,22 @@ public class MainViewController {
             thread.start();
         });
         listView.setOnMouseClicked(event-> {
-            List<FileFreq> listOfLinks = uniqueSets.get(listView.getSelectionModel().
-                    getSelectedItem());
+//            List<FileFreq> listOfLinks = uniqueSets.get(listView.getSelectionModel().getSelectedItem());
+
+            String selectedDisplay = (String) listView.getSelectionModel().getSelectedItem();
+            if (selectedDisplay == null) return;
+            String realKey = displayToKeyMap.get(selectedDisplay);
+            if (realKey == null) return;
+            List<FileFreq> listOfLinks = uniqueSets.get(realKey);
+            if (listOfLinks == null) return;
+
             ListView<FileFreq> popupListView = new ListView<>();
             LinkedHashMap<FileFreq,String> lookupTable = new LinkedHashMap<>();
             for (int i=0 ; i<listOfLinks.size() ; i++) {
                 lookupTable.put(listOfLinks.get(i), listOfLinks.get(i).getPath());
                 popupListView.getItems().add(listOfLinks.get(i));
             }
+
             popupListView.setPrefWidth(Region.USE_COMPUTED_SIZE);
             popupListView.setPrefHeight(popupListView.getItems().size() * 40);
             popupListView.setOnMouseClicked(innerEvent-> {

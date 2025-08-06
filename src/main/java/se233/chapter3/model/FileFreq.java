@@ -21,4 +21,8 @@ public class FileFreq {
     public int getFreq() {
         return freq;
     }
+
+    public String getName(){
+        return name;
+    }
 }
