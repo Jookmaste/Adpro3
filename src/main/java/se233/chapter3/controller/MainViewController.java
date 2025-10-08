@@ -16,6 +16,7 @@ import se233.chapter3.Launcher;
 import se233.chapter3.model.FileFreq;
 import se233.chapter3.model.PdfDocument;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -24,8 +25,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainViewController {
+
+    private static final Logger logger = LoggerFactory.getLogger(MainViewController.class);
 
     Map<String, String> displayToKeyMap;
 
@@ -69,6 +74,11 @@ public class MainViewController {
             }
         });
         startButton.setOnAction(event-> {
+
+            List<String> fileNames = inputListView.getItems();
+
+            logger.info("Starting indexing process for files: {}", fileNames);
+
             Parent bgRoot = Launcher.primaryStage.getScene().getRoot();
             Task<Void> processTask = new Task<Void>() {
                 @Override
